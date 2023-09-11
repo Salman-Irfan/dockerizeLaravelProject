@@ -1,0 +1,50 @@
+version: '3.0'
+
+services:
+
+  # web server services
+  nginx:
+    image: 'nginx'
+    container_name: 'nginxContainer'
+    ports:
+      - "8080:80"
+    volumes:
+      - ./laravelBlog5:/var/www
+    depends_on:
+      - app
+      - db
+
+  # database service
+  db:
+    image: postgres
+    container_name: postgresContainer
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: laravelBlog5
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+
+  # application service
+  app:
+    container_name: laravelBlog5
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    volumes:
+      - ./laravelBlog5:/var/www
+    ports:
+      - "8000:8000"
+    working_dir: /var/www
+
+  # pg admin service
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgAdminContainer
+    ports:
+      - "5050:5050"
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: salmanirfan674@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
